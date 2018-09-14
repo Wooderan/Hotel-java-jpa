@@ -3,7 +3,10 @@ package com.example.hotel_jpa.models;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+
 import java.time.LocalDate;
+import java.util.Date;
+
 
 @Entity
 @Table(name = "checkins")
@@ -15,21 +18,29 @@ public class CheckIn {
     }
 
     @Id
-    @GeneratedValue(generator = "increment")
-    @GenericGenerator(name = "increment", strategy = "increment")
-    @Column(name = "id", length = 6, nullable = false)
-    private int id;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id")
+    private Long id;
 
-    @Column(name = "id_client")
-    private int idClient;
-    @Column(name = "id_room")
-    private int idRoom;
+    @ManyToOne
+    @JoinColumn(name = "client")
+    private Client client;
+
+    @ManyToOne
+    @JoinColumn(name = "room")
+    private Room room;
+
     @Column(name = "date_settlement")
+    @Temporal(value = TemporalType.DATE)
     private LocalDate dateOfSettlement;
+
     @Column(name = "date_release")
+    @Temporal(value = TemporalType.DATE)
     private LocalDate dateOfRelease;
+
     @Column(name = "note")
     private String note;
+
     @Column(name = "state")
     private State state = State.ACTIVE;
 
@@ -38,9 +49,9 @@ public class CheckIn {
     public CheckIn() {
     }
 
-    public CheckIn(int idClient, int idRoom, LocalDate dateOfSettlement, LocalDate dateOfRelease) {
-        this.idClient = idClient;
-        this.idRoom = idRoom;
+    public CheckIn(Client client, Room room, LocalDate dateOfSettlement, LocalDate dateOfRelease) {
+        this.client = client;
+        this.room = room;
         this.dateOfSettlement = dateOfSettlement;
         this.dateOfRelease = dateOfRelease;
     }
@@ -49,8 +60,8 @@ public class CheckIn {
     public String toString() {
         return "CheckIn{" +
                 "id=" + id +
-                ", idClient=" + idClient +
-                ", idRoom=" + idRoom +
+                ", idClient=" + client +
+                ", idRoom=" + room +
                 ", dateOfSettlement=" + dateOfSettlement +
                 ", dateOfRelease=" + dateOfRelease +
                 ", note='" + note + '\'' +
@@ -66,28 +77,28 @@ public class CheckIn {
         this.state = state;
     }
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public int getIdClient() {
-        return idClient;
+    public Client getClient() {
+        return client;
     }
 
-    public void setIdClient(int idClient) {
-        this.idClient = idClient;
+    public void setClient(Client client) {
+        this.client = client;
     }
 
-    public int getIdRoom() {
-        return idRoom;
+    public Room getRoom() {
+        return room;
     }
 
-    public void setIdRoom(int idRoom) {
-        this.idRoom = idRoom;
+    public void setRoom(Room room) {
+        this.room = room;
     }
 
     public LocalDate getDateOfSettlement() {

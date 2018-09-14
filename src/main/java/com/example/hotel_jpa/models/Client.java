@@ -10,21 +10,21 @@ import javax.persistence.*;
 public class Client {
 
     @Id
-    @GeneratedValue(generator = "increment")
-    @GenericGenerator(name = "increment", strategy = "increment")
-    @Column(name = "id", length = 6, nullable = false)
-    private int id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private Long id;
 
-    @Column(name = "first_name")
-    public String firstName;
-    @Column(name = "last_name")
-    public String lastName;
-    @Column(name = "patronumic")
-    public String patronymic;
-    @Column(name = "passport")
-    public String passport;
+    @Column(name = "first_name", length = 45)
+    private String firstName;
+    @Column(name = "last_name", length = 45)
+    private String lastName;
+    @Column(name = "patronymic", length = 45)
+    private String patronymic;
+    @Column(name = "passport", length = 45)
+    private String passport;
     @Column(name = "comment")
-    public String comment = "No comment";
+    private String comment = "No comment";
+
 
     public Client() {
     }
@@ -48,9 +48,6 @@ public class Client {
                 '}';
     }
 
-    public int getId() {
-        return id;
-    }
 
     public String getFirstName() {
         return firstName;
@@ -72,9 +69,6 @@ public class Client {
         return comment;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
 
     public void setFirstName(String firstName) {
         this.firstName = firstName;
@@ -94,5 +88,13 @@ public class Client {
 
     public void setComment(String comment) {
         this.comment = comment;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 }
