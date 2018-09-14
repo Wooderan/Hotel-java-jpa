@@ -15,8 +15,8 @@ public class RoomServiceImpl implements IRoomService {
     private IRoomRepository repository;
 
     @Override
-    public Room addRoom(Room client) {
-        return repository.saveAndFlush(client);
+    public Room addRoom(Room room) {
+        return repository.saveAndFlush(room);
     }
 
     @Override
@@ -30,8 +30,8 @@ public class RoomServiceImpl implements IRoomService {
     }
 
     @Override
-    public Room editRoom(Room client) {
-        return repository.saveAndFlush(client);
+    public Room editRoom(Room room) {
+        return repository.saveAndFlush(room);
     }
 
     @Override

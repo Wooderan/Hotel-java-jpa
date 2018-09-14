@@ -5,7 +5,6 @@ import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.*;
 
 import java.time.LocalDate;
-import java.util.Date;
 
 
 @Entity
@@ -18,7 +17,7 @@ public class CheckIn {
     }
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
 
@@ -31,11 +30,9 @@ public class CheckIn {
     private Room room;
 
     @Column(name = "date_settlement")
-    @Temporal(value = TemporalType.DATE)
     private LocalDate dateOfSettlement;
 
     @Column(name = "date_release")
-    @Temporal(value = TemporalType.DATE)
     private LocalDate dateOfRelease;
 
     @Column(name = "note")
@@ -60,8 +57,8 @@ public class CheckIn {
     public String toString() {
         return "CheckIn{" +
                 "id=" + id +
-                ", idClient=" + client +
-                ", idRoom=" + room +
+                ", Client=" + client +
+                ", Room=" + room +
                 ", dateOfSettlement=" + dateOfSettlement +
                 ", dateOfRelease=" + dateOfRelease +
                 ", note='" + note + '\'' +

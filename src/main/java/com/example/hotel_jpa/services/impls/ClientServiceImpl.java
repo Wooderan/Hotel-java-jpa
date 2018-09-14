@@ -17,7 +17,9 @@ public class ClientServiceImpl implements IClientService {
 
     @Override
     public Client addClient(Client client) {
-        return repository.saveAndFlush(client);
+        if (repository.findByPassport(client.getPassport()) == null)
+            return repository.saveAndFlush(client);
+        return null;
     }
 
     @Override

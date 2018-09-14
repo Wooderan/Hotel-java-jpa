@@ -13,9 +13,11 @@ public class Main{
 
         SpringApplication.run(Main.class);
 
-        App app = new App(args);
         SandBoxClientController controller = ApplicationContextHolder.getContext().getBean(SandBoxClientController.class);
-        controller.setApp(app);
+
+
+//        App app = new App(args);
+//        controller.setApp(app);
         controller.makeSomeMagic();
 
 
