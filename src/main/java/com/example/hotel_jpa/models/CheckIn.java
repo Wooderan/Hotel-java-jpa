@@ -1,5 +1,7 @@
 package com.example.hotel_jpa.models;
 
+import javafx.beans.property.LongProperty;
+import javafx.beans.property.StringProperty;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -121,4 +123,6 @@ public class CheckIn {
     public void setNote(String note) {
         this.note = note;
     }
+
+
 }

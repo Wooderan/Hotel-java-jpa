@@ -1,6 +1,10 @@
 package com.example.hotel_jpa.models;
 
 
+import javafx.beans.property.LongProperty;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -9,31 +13,30 @@ import javax.persistence.*;
 @Table(name = "clients")
 public class Client {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private Long id;
 
-    @Column(name = "first_name", length = 45)
-    private String firstName;
-    @Column(name = "last_name", length = 45)
-    private String lastName;
-    @Column(name = "patronymic", length = 45)
-    private String patronymic;
-    @Column(name = "passport", length = 45)
-    private String passport;
-    @Column(name = "comment")
-    private String comment = "No comment";
+    private StringProperty firstName;
+    private StringProperty lastName;
+    private StringProperty patronymic;
+    private StringProperty passport;
+    private StringProperty comment;
 
 
     public Client() {
+        this.firstName = new SimpleStringProperty();
+        this.lastName = new SimpleStringProperty();
+        this.patronymic = new SimpleStringProperty();
+        this.passport = new SimpleStringProperty();
+        this.comment = new SimpleStringProperty();
     }
 
     public Client(String firstName, String lastName, String patronymic, String passport) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.patronymic = patronymic;
-        this.passport = passport;
+        this();
+        this.firstName.set(firstName);
+        this.lastName.set(lastName);
+        this.patronymic.set(patronymic);
+        this.passport.set(passport);
+        this.comment.set("no comment");
     }
 
     @Override
@@ -49,52 +52,92 @@ public class Client {
     }
 
 
+    @Column(name = "first_name")
     public String getFirstName() {
+        return firstName.get();
+    }
+    public StringProperty firstNameProperty() {
         return firstName;
     }
 
+    @Column(name = "last_name")
     public String getLastName() {
-        return lastName;
+        return lastName.get();
     }
+    public StringProperty lastNameProperty(){return lastName;}
 
+    @Column(name = "patronymic")
     public String getPatronymic() {
-        return patronymic;
+        return patronymic.get();
     }
+    public StringProperty patronymicProperty(){return patronymic;}
 
+    @Column(name = "passport")
     public String getPassport() {
-        return passport;
+        return passport.get();
     }
 
+    public StringProperty passportProperty(){return passport;}
+
+    @Column(name = "comment")
     public String getComment() {
-        return comment;
+        return comment.get();
     }
+    public StringProperty commentProperty(){return comment;}
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    public Long getId() {
+        return id;
+    }
+    public Long idProperty(){return id;}
 
 
     public void setFirstName(String firstName) {
-        this.firstName = firstName;
+        if (firstName != null)
+            try {
+                this.firstName.set(firstName);
+            } catch (Exception e) {
+//                e.printStackTrace();
+            }
     }
 
     public void setLastName(String lastName) {
-        this.lastName = lastName;
+        try {
+            this.lastName.set(lastName);
+        } catch (Exception e) {
+//            e.printStackTrace();
+        }
     }
 
     public void setPatronymic(String patronymic) {
-        this.patronymic = patronymic;
+        try {
+            this.patronymic.set(patronymic);
+        } catch (Exception e) {
+//            e.printStackTrace();
+        }
     }
 
     public void setPassport(String passport) {
-        this.passport = passport;
+        try {
+            this.passport.set(passport);
+        } catch (Exception e) {
+//            e.printStackTrace();
+        }
     }
 
     public void setComment(String comment) {
-        this.comment = comment;
-    }
-
-    public Long getId() {
-        return id;
+        try {
+            this.comment.set(comment);
+        } catch (Exception e) {
+//            e.printStackTrace();
+        }
     }
 
     public void setId(Long id) {
         this.id = id;
     }
+
+
 }

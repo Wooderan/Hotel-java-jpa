@@ -9,6 +9,7 @@ public interface IClientService {
     Client addClient(Client client);
     void delete(long id);
     Client getByLastName(String name);
+    Client getByPassport(String passport);
     Client editClient(Client client);
     List<Client> getAll();
 }

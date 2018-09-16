@@ -3,6 +3,9 @@ package com.example.hotel_jpa.services.impls;
 import com.example.hotel_jpa.models.Client;
 import com.example.hotel_jpa.repositories.IClientRepository;
 import com.example.hotel_jpa.services.IClientService;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableArray;
+import javafx.collections.ObservableList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
@@ -33,12 +36,25 @@ public class ClientServiceImpl implements IClientService {
     }
 
     @Override
+    public Client getByPassport(String passport) {
+        return repository.findByPassport(passport);
+    }
+
+    @Override
     public Client editClient(Client client) {
         return repository.saveAndFlush(client);
     }
 
     @Override
     public List<Client> getAll() {
+
         return repository.findAll();
     }
+
+    public ObservableList<Client> getAllObserved() {
+        ObservableList<Client> retList = FXCollections.observableArrayList(repository.findAll());
+        return retList;
+    }
+
+
 }
