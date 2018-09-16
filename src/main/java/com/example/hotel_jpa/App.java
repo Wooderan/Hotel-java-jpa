@@ -153,4 +153,24 @@ public class App extends Application {
     public RoomServiceImpl getRoomService() {
         return roomService;
     }
+
+    public void editClient(Client client) {
+        try {
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(App.class.getResource("/ClientCreatorView.fxml"));
+            ClientCreatorController controller;
+            Parent parent;
+            parent = loader.load();
+            controller = loader.getController();
+            controller.setApp(this, client);
+            Scene scene = new Scene(parent);
+
+            Stage stage = new Stage();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setScene(scene);
+            stage.showAndWait();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

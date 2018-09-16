@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 //import org.springframework.transaction.annotation.Transactional;
 
 @Repository
-public interface IClientRepository extends JpaRepository<Client, Integer> {
+public interface IClientRepository extends JpaRepository<Client, Long> {
     @Query("select c from Client c where c.lastName = :name")
     Client findByLastName(@Param("name") String lastName);
 

@@ -3,6 +3,7 @@ package com.example.hotel_jpa.view;
 
 import com.example.hotel_jpa.App;
 import com.example.hotel_jpa.models.Client;
+import com.example.hotel_jpa.services.impls.ClientServiceImpl;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -55,6 +56,7 @@ public class ClientViewController implements Serializable {
 
     private App app;
     private Client currentClient;
+    private ClientServiceImpl service;
 
     public ClientViewController() {
     }
@@ -74,6 +76,26 @@ public class ClientViewController implements Serializable {
             if (newClient != null)
                 this.setLabels(newClient);
         });
+
+        deleteBtn.setOnAction(e -> {
+            if (table.getSelectionModel().getSelectedCells().isEmpty()){
+                //TODO warning "first select some client"
+                return;
+            }
+            Client client = table.getSelectionModel().getSelectedItem();
+            clientData.removeAll(client);
+            service.delete(client.getId());
+        });
+
+        editBtn.setOnAction(e -> {
+            if (table.getSelectionModel().getSelectedCells().isEmpty()){
+                //TODO warning "first select some client"
+                return;
+            }
+
+            Client client = table.getSelectionModel().getSelectedItem();
+            app.editClient(client);
+        });
     }
 
     public void setApp(App app) {
@@ -81,6 +103,7 @@ public class ClientViewController implements Serializable {
 //
 //        List<Client> clients = app.getClientData();
         clientData = app.getClientData();
+        service = app.getClientService();
         table.setItems(clientData);
         this.setLabels(clientData.get(0));
 

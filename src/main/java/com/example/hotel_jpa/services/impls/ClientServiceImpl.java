@@ -27,7 +27,7 @@ public class ClientServiceImpl implements IClientService {
 
     @Override
     public void delete(long id) {
-        repository.deleteById((int) id);
+        repository.deleteById(id);
     }
 
     @Override
@@ -42,7 +42,15 @@ public class ClientServiceImpl implements IClientService {
 
     @Override
     public Client editClient(Client client) {
-        return repository.saveAndFlush(client);
+        Client oldClient = repository.findByPassport(client.getPassport());
+        if (oldClient != null){
+            oldClient.setFirstName(client.getFirstName());
+            oldClient.setLastName(client.getLastName());
+            oldClient.setPassport(client.getPassport());
+            oldClient.setPatronymic(client.getPatronymic());
+            oldClient.setComment(client.getComment());
+        }
+        return client;
     }
 
     @Override

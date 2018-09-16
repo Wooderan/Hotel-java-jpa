@@ -49,6 +49,19 @@ public class ClientCreatorController implements Serializable {
         this.service = app.getClientService();
     }
 
+
+    public void setApp(App app, Client client) {
+        setApp(app);
+        createBtn.setText("Edit");
+        newClient = client;
+
+        firstNameField.setText(newClient.getFirstName());
+        lastNameField.setText(newClient.getLastName());
+        patronymicField.setText(newClient.getPatronymic());
+        passportField.setText(newClient.getPassport());
+        commentField.setText(newClient.getComment());
+    }
+
     @FXML
     private void initialize(){
         newClient = null;
@@ -58,18 +71,42 @@ public class ClientCreatorController implements Serializable {
 
         createBtn.setOnAction(e -> {
             if (this.emptyFields()){
+                //TODO warning "some fields are empty"
                 return;
             }
 
-            Client client = new Client(
+            if (newClient != null){
+                int i = clients.indexOf(newClient);
+                clients.remove(i);
+                service.delete(newClient.getId());
+
+                newClient = new Client(
+                        firstNameField.getText(),
+                        lastNameField.getText(),
+                        patronymicField.getText(),
+                        passportField.getText());
+
+                clients.add(i, newClient);
+                service.addClient(newClient);
+                closeStage(e);
+                return;
+            }
+
+
+            if (service.getByPassport(passportField.getText()) != null){
+                //TODO warning "user with such passport exists"
+                return;
+            }
+
+            newClient = new Client(
                     firstNameField.getText(),
                     lastNameField.getText(),
                     patronymicField.getText(),
                     passportField.getText());
 
-            if (service.getByPassport(passportField.getText()) != null){
-                //TODO
-            }
+            service.addClient(newClient);
+            clients.add(newClient);
+            closeStage(e);
         });
     }
 
@@ -96,4 +133,5 @@ public class ClientCreatorController implements Serializable {
             return true;
         return false;
     }
+
 }
