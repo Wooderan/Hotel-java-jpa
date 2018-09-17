@@ -5,6 +5,8 @@ import com.example.hotel_jpa.models.Client;
 import com.example.hotel_jpa.models.Room;
 import com.example.hotel_jpa.repositories.ICheckInRepository;
 import com.example.hotel_jpa.services.ICheckInService;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -44,5 +46,10 @@ public class CheckInServiceImpl implements ICheckInService {
     @Override
     public List<CheckIn> getAll() {
         return repository.findAll();
+    }
+
+    public ObservableList<CheckIn> getAllObserved() {
+        ObservableList<CheckIn> retList = FXCollections.observableArrayList(repository.findAll());
+        return retList;
     }
 }
