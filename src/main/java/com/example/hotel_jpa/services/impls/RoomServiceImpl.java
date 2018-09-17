@@ -7,6 +7,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -33,9 +34,17 @@ public class RoomServiceImpl implements IRoomService {
         return repository.findByNumber(number);
     }
 
+    @Transactional
     @Override
     public Room editRoom(Room room) {
-        return repository.saveAndFlush(room);
+        repository.updateRoom(
+                room.getNumber(),
+                room.getName(),
+                room.getNumberOfPeoples(),
+                room.getComfortable(),
+                room.getPrice()
+        );
+        return getByNumber(room.getNumber());
     }
 
     @Override

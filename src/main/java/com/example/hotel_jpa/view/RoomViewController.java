@@ -80,6 +80,26 @@ public class RoomViewController {
         createBtn.setOnAction(e -> {
             app.getNewRoom();
         });
+
+        editBtn.setOnAction(e -> {
+            if (table.getSelectionModel().getSelectedItem() == null) {
+                //TODO warning "select something"
+                return;
+            }
+
+            app.editRoom(table.getSelectionModel().getSelectedItem());
+        });
+
+        deleteBtn.setOnAction(e -> {
+            if (table.getSelectionModel().isEmpty()){
+                //TODO warning "select something"
+                return;
+            }
+
+            Room r = table.getSelectionModel().getSelectedItem();
+            service.delete(r.getId());
+            roomData.remove(r);
+        });
     }
 
     private void close(){

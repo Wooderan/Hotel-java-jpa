@@ -242,4 +242,27 @@ public class App extends Application {
             e.printStackTrace();
         }
     }
+
+    public void editRoom(Room selectedItem) {
+        try {
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(App.class.getResource("/RoomCreatorView.fxml"));
+            RoomCreatorController controller;
+            Parent parent;
+            parent = loader.load();
+            controller = loader.getController();
+            controller.setApp(this, selectedItem);
+            Scene scene = new Scene(parent);
+
+            Stage stage = new Stage();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setScene(scene);
+            stage.showAndWait();
+
+            Room newRoom= controller.getNewRoom();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

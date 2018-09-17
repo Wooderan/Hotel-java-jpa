@@ -48,6 +48,7 @@ public class Room {
     public String toString() {
         return "Room{" +
                 "id=" + id +
+                "name=" + name +
                 ", number=" + number +
                 ", numberOfPeoples=" + numberOfPeoples +
                 ", comfortable=" + comfortable +
