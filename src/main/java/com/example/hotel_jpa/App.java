@@ -1,15 +1,13 @@
 package com.example.hotel_jpa;
 
+import com.example.hotel_jpa.controllers.SandBoxClientController;
 import com.example.hotel_jpa.models.CheckIn;
 import com.example.hotel_jpa.models.Client;
 import com.example.hotel_jpa.models.Room;
 import com.example.hotel_jpa.services.impls.CheckInServiceImpl;
 import com.example.hotel_jpa.services.impls.ClientServiceImpl;
 import com.example.hotel_jpa.services.impls.RoomServiceImpl;
-import com.example.hotel_jpa.view.ClientCreatorController;
-import com.example.hotel_jpa.view.ClientViewController;
-import com.example.hotel_jpa.view.RoomCreatorController;
-import com.example.hotel_jpa.view.RoomViewController;
+import com.example.hotel_jpa.view.*;
 import javafx.application.Application;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
@@ -55,9 +53,6 @@ public class App extends Application {
     }
 
     public static void main(String[] args) {
-
-//        SandBoxClientController controller = ApplicationContextHolder.getContext().getBean(SandBoxClientController.class);
-//        controller.makeSomeMagic();
         App.args = args;
         launch(App.class, args);
     }
@@ -68,6 +63,8 @@ public class App extends Application {
     public void init() throws Exception {
         context = SpringApplication.run(App.class, args);
         context.getAutowireCapableBeanFactory().autowireBean(this);
+//        SandBoxClientController controller = context.getBean(SandBoxClientController.class);
+//        controller.makeSomeMagic();
     }
 
     @Override
@@ -80,18 +77,19 @@ public class App extends Application {
     public void start(Stage primaryStage) {
         clients = clientService.getAllObserved();
         rooms = roomService.getAllObserved();
-//        checkins = checkInService.getAllObserved();
+        checkins = checkInService.getAllObserved();
 
         this.primaryStage = primaryStage;
         this.primaryStage.setTitle("HotelMy");
 
         initRootLayout();
-//        showPersonOverview();
+//        showClientOverview();
 //        addSomeRooms();
-        showRoomOverview();
+//        showRoomOverview();
+        showCheckinOverview();
     }
 
-    private void showPersonOverview() {
+    private void showClientOverview() {
         try {
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(App.class.getResource("/ClientView.fxml"));
@@ -100,6 +98,21 @@ public class App extends Application {
             rootLayout.setCenter(clientsOverview);
 
             ClientViewController clientViewController = loader.getController();
+            clientViewController.setApp(this);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void showCheckinOverview() {
+        try {
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(App.class.getResource("/ChekinView.fxml"));
+            AnchorPane checkinsOverview = loader.load();
+
+            rootLayout.setCenter(checkinsOverview);
+
+            CheckinViewController clientViewController = loader.getController();
             clientViewController.setApp(this);
         } catch (IOException e) {
             e.printStackTrace();
@@ -121,15 +134,15 @@ public class App extends Application {
         }
     }
 
-    private void addSomeRooms(){
-        List<Room> list = Arrays.asList(
-                new Room("Cleopatra", 1, 2, Room.Comfortable.SUITE, 200),
-                new Room("Paris", 2, 2, Room.Comfortable.SUITE, 210),
-                new Room("Siesta", 3, 1, Room.Comfortable.HALF_SUITE, 130)
-        );
-
-        list.forEach(room -> roomService.addRoom(room));
-    }
+//    private void addSomeRooms(){
+//        List<Room> list = Arrays.asList(
+//                new Room("Cleopatra", 1, 2, Room.Comfortable.SUITE, 200),
+//                new Room("Paris", 2, 2, Room.Comfortable.SUITE, 210),
+//                new Room("Siesta", 3, 1, Room.Comfortable.HALF_SUITE, 130)
+//        );
+//
+//        list.forEach(room -> roomService.addRoom(room));
+//    }
 
     private void initRootLayout() {
         try {

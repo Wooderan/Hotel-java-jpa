@@ -33,22 +33,23 @@ public class SandBoxClientController {
 
 //        List<Room> listRoom = roomService.getAll();
 //        List<Client> listClient = clientService.getAll();
-
+//
 //        List<CheckIn> listCheckIn = Arrays.asList(
 //                new CheckIn(listClient.get(0), listRoom.get(0), LocalDate.now(), LocalDate.now().plusDays(3)),
 //                new CheckIn(listClient.get(1), listRoom.get(1), LocalDate.now(), LocalDate.now().plusDays(4)),
 //                new CheckIn(listClient.get(2), listRoom.get(2), LocalDate.now(), LocalDate.now().plusDays(5))
 //        );
+//        listCheckIn.forEach(c -> checkInService.addCheckIn(c));
 
-        List<Client> listClient = Arrays.asList(
-                new Client("Ivan", "Ivanov", "Ivanovich", "UK456"),
-                new Client("Petr", "Petrov", "Petrovich", "UK789")
-        );
-        listClient.forEach(client -> clientService.addClient(client));
+//        List<Client> listClient = Arrays.asList(
+//                new Client("Ivan", "Ivanov", "Ivanovich", "UK456"),
+//                new Client("Petr", "Petrov", "Petrovich", "UK789")
+//        );
+//        listClient.forEach(client -> clientService.addClient(client));
 //        System.out.println(clientService.getByLastName("Krivulia"));
 
         System.out.println("Added:");
-        clientService.getAll().forEach(System.out::println);
+        checkInService.getAll().forEach(System.out::println);
     }
 
     public void setApp(App app) {

@@ -25,7 +25,7 @@ public class CheckInServiceImpl implements ICheckInService {
 
     @Override
     public void delete(long id) {
-        repository.deleteById((int) id);
+        repository.deleteById( id);
     }
 
     @Override

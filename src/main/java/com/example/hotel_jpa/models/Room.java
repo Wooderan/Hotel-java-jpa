@@ -48,11 +48,11 @@ public class Room {
     public String toString() {
         return "Room{" +
                 "id=" + id +
-                "name=" + name +
-                ", number=" + number +
-                ", numberOfPeoples=" + numberOfPeoples +
-                ", comfortable=" + comfortable +
-                ", price=" + price +
+                "name=" + name.getValue() +
+                ", number=" + number.getValue() +
+                ", numberOfPeoples=" + numberOfPeoples.getValue() +
+                ", comfortable=" + comfortable.getValue() +
+                ", price=" + price.getValue() +
                 '}';
     }
 
