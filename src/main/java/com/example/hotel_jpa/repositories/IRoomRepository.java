@@ -6,6 +6,8 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
+
 public interface IRoomRepository extends JpaRepository<Room, Long> {
 
     @Query("select r from Room r where r.number = :number")
@@ -21,4 +23,7 @@ public interface IRoomRepository extends JpaRepository<Room, Long> {
             @Param("comfortable")Room.Comfortable comfortable,
             @Param("price")Double price
     );
+
+
+    List<Room> findByState(Room.State state);
 }

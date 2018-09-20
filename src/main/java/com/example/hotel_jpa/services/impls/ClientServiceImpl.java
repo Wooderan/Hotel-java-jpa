@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -38,6 +39,16 @@ public class ClientServiceImpl implements IClientService {
     @Override
     public Client getByPassport(String passport) {
         return repository.findByPassport(passport);
+    }
+
+    public List<Client> getByRequest(String request){
+        List<Client> result = new ArrayList<>();
+        result.addAll(repository.findAllByFirstName(request));
+        result.addAll(repository.findAllByLastName(request));
+        Client resPass = repository.findByPassport(request);
+        if (resPass != null)
+            result.add(resPass);
+        return result;
     }
 
     @Override

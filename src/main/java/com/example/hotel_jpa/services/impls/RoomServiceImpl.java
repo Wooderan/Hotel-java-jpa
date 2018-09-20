@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
 import java.util.List;
 
 @Service
@@ -55,5 +56,9 @@ public class RoomServiceImpl implements IRoomService {
     public ObservableList<Room> getAllObserved() {
         ObservableList<Room> retList = FXCollections.observableArrayList(repository.findAll());
         return retList;
+    }
+
+    public List<Room> getAllFree() {
+        return repository.findByState(Room.State.FREE);
     }
 }

@@ -7,9 +7,12 @@ import com.example.hotel_jpa.services.impls.ClientServiceImpl;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.stage.Stage;
 
 
 import java.io.Serializable;
@@ -54,9 +57,16 @@ public class ClientViewController implements Serializable {
     @FXML
     private Button deleteBtn;
 
+    @FXML
+    private Button chooseBtn;
+
+    @FXML
+    private TextField searchField;
+
     private App app;
     private Client currentClient;
     private ClientServiceImpl service;
+    private Client choosenClient;
 
     public ClientViewController() {
     }
@@ -68,7 +78,8 @@ public class ClientViewController implements Serializable {
         passportColumn.setCellValueFactory(cellData -> cellData.getValue().passportProperty());
 
         table.getSelectionModel().selectedItemProperty().addListener((observableValue, oldclient, newClient) -> {
-            this.setLabels(newClient);
+            if (newClient != null)
+                this.setLabels(newClient);
         });
 
         newBtn.setOnAction( actionEvent -> {
@@ -95,6 +106,25 @@ public class ClientViewController implements Serializable {
 
             Client client = table.getSelectionModel().getSelectedItem();
             app.editClient(client);
+        });
+
+        chooseBtn.setOnAction(e -> {
+            if (table.getSelectionModel().getSelectedCells().isEmpty()){
+                //TODO warning "select something"
+                return;
+            }
+            choosenClient = table.getSelectionModel().getSelectedItem();
+            closeStage(e);
+        });
+
+        searchField.setOnAction(e -> {
+            if (searchField.getText().isEmpty())
+                table.setItems(clientData);
+            else{
+                String request = searchField.getText();
+                ObservableList<Client> result = FXCollections.observableArrayList(service.getByRequest(request));
+                table.setItems(result);
+            }
         });
     }
 
@@ -123,5 +153,15 @@ public class ClientViewController implements Serializable {
         passportLabel.setText(client.getPassport());
         commentLabel.setText(client.getComment());
 
+    }
+
+    public Client getChoosenClient() {
+        return choosenClient;
+    }
+
+    private void closeStage(ActionEvent e){
+        Node node = (Node) e.getSource();
+        Stage stage = (Stage) node.getScene().getWindow();
+        stage.close();
     }
 }

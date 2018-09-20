@@ -8,6 +8,8 @@ import javafx.beans.property.StringProperty;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "clients")
@@ -20,6 +22,8 @@ public class Client {
     private StringProperty patronymic;
     private StringProperty passport;
     private StringProperty comment;
+
+    private Set<CheckIn> checkins = new HashSet<>();
 
 
     public Client() {
@@ -51,11 +55,20 @@ public class Client {
                 '}';
     }
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    public Long getId() {
+        return id;
+    }
+    public void setId(Long id) {this.id = id;}
+    public Long idProperty(){return id;}
 
     @Column(name = "first_name")
     public String getFirstName() {
         return firstName.get();
     }
+    public void setFirstName(String firstName) {this.firstName.set(firstName);}
     public StringProperty firstNameProperty() {
         return firstName;
     }
@@ -64,80 +77,31 @@ public class Client {
     public String getLastName() {
         return lastName.get();
     }
+    public void setLastName(String lastName) {this.lastName.set(lastName);}
     public StringProperty lastNameProperty(){return lastName;}
 
     @Column(name = "patronymic")
     public String getPatronymic() {
         return patronymic.get();
     }
+    public void setPatronymic(String patronymic) {this.patronymic.set(patronymic);}
     public StringProperty patronymicProperty(){return patronymic;}
 
     @Column(name = "passport")
     public String getPassport() {
         return passport.get();
     }
-
+    public void setPassport(String passport) {this.passport.set(passport);}
     public StringProperty passportProperty(){return passport;}
 
     @Column(name = "comment")
     public String getComment() {
         return comment.get();
     }
+    public void setComment(String comment) {this.comment.set(comment);}
     public StringProperty commentProperty(){return comment;}
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    public Long getId() {
-        return id;
-    }
-    public Long idProperty(){return id;}
-
-
-    public void setFirstName(String firstName) {
-        if (firstName != null)
-            try {
-                this.firstName.set(firstName);
-            } catch (Exception e) {
-//                e.printStackTrace();
-            }
-    }
-
-    public void setLastName(String lastName) {
-        try {
-            this.lastName.set(lastName);
-        } catch (Exception e) {
-//            e.printStackTrace();
-        }
-    }
-
-    public void setPatronymic(String patronymic) {
-        try {
-            this.patronymic.set(patronymic);
-        } catch (Exception e) {
-//            e.printStackTrace();
-        }
-    }
-
-    public void setPassport(String passport) {
-        try {
-            this.passport.set(passport);
-        } catch (Exception e) {
-//            e.printStackTrace();
-        }
-    }
-
-    public void setComment(String comment) {
-        try {
-            this.comment.set(comment);
-        } catch (Exception e) {
-//            e.printStackTrace();
-        }
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-
+    @ManyToMany(mappedBy = "client", fetch = FetchType.EAGER)
+    public Set<CheckIn> getCheckins() {return checkins;}
+    public void setCheckins(Set<CheckIn> checkins) {this.checkins = checkins;}
 }

@@ -19,8 +19,8 @@ public class CheckInServiceImpl implements ICheckInService {
     private ICheckInRepository repository;
 
     @Override
-    public CheckIn addCheckIn(CheckIn client) {
-        return repository.saveAndFlush(client);
+    public CheckIn addCheckIn(CheckIn checkin) {
+        return repository.saveAndFlush(checkin);
     }
 
     @Override
