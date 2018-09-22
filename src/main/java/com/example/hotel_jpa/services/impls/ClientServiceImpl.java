@@ -53,15 +53,7 @@ public class ClientServiceImpl implements IClientService {
 
     @Override
     public Client editClient(Client client) {
-        Client oldClient = repository.findByPassport(client.getPassport());
-        if (oldClient != null){
-            oldClient.setFirstName(client.getFirstName());
-            oldClient.setLastName(client.getLastName());
-            oldClient.setPassport(client.getPassport());
-            oldClient.setPatronymic(client.getPatronymic());
-            oldClient.setComment(client.getComment());
-        }
-        return client;
+        return repository.saveAndFlush(client);
     }
 
     @Override

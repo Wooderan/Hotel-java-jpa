@@ -4,10 +4,13 @@ import com.example.hotel_jpa.App;
 import com.example.hotel_jpa.models.Room;
 import com.example.hotel_jpa.services.impls.RoomServiceImpl;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.stage.Stage;
 
 public class RoomViewController {
 
@@ -64,22 +67,21 @@ public class RoomViewController {
         stateColumn.setCellValueFactory(cellData -> cellData.getValue().stateProperty());
         priceColumn.setCellValueFactory(cellData -> cellData.getValue().priceProperty().asObject());
 
-        chooseBtn.setOnAction(actionEvent -> {
-            Room selectedItem = table.getSelectionModel().getSelectedItem();
-            if (selectedItem == null){
-                //TODO warning message "select some room first"
-                return;
-            }
+        chooseBtn.setVisible(false);
+//        chooseBtn.setOnAction(actionEvent -> {
+//            Room selectedItem = table.getSelectionModel().getSelectedItem();
+//            if (selectedItem == null){
+//                //TODO warning message "select some room first"
+//                return;
+//            }
+//
+//            this.choosenRoom = selectedItem;
+//            close();
+//        });
 
-            this.choosenRoom = selectedItem;
-            close();
-        });
+        cancelBtn.setOnAction(this::closeStage);
 
-        cancelBtn.setOnAction(actionEvent -> this.close());
-
-        createBtn.setOnAction(e -> {
-            app.getNewRoom();
-        });
+        createBtn.setOnAction(e -> app.createNewRoom());
 
         editBtn.setOnAction(e -> {
             if (table.getSelectionModel().getSelectedItem() == null) {
@@ -102,8 +104,10 @@ public class RoomViewController {
         });
     }
 
-    private void close(){
-        //TODO some action to change anchorPane to checkins
+    private void closeStage(ActionEvent e){
+        Node node = (Node) e.getSource();
+        Stage stage = (Stage) node.getScene().getWindow();
+        stage.close();
     }
 
     public void setApp(App app){

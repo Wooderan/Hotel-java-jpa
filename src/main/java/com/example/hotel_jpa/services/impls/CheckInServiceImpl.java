@@ -9,6 +9,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -49,7 +50,18 @@ public class CheckInServiceImpl implements ICheckInService {
     }
 
     public ObservableList<CheckIn> getAllObserved() {
-        ObservableList<CheckIn> retList = FXCollections.observableArrayList(repository.findAll());
+        return FXCollections.observableArrayList(repository.findAll());
+    }
+
+    @Transactional
+    public void setState(Long id, CheckIn.State state) {
+        repository.setState(id, state);
+    }
+
+    public ObservableList<CheckIn> getAllActive() {
+        ObservableList<CheckIn> retList = FXCollections.observableArrayList();
+        retList.addAll(repository.findByState(CheckIn.State.ACTIVE));
+        retList.addAll(repository.findByState(CheckIn.State.BOOKED));
         return retList;
     }
 }

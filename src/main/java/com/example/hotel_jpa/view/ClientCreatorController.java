@@ -78,7 +78,8 @@ public class ClientCreatorController implements Serializable {
             if (newClient != null){
                 int i = clients.indexOf(newClient);
                 clients.remove(i);
-                service.delete(newClient.getId());
+                long id = newClient.getId();
+                service.delete(id);
 
                 newClient = new Client(
                         firstNameField.getText(),
@@ -86,8 +87,9 @@ public class ClientCreatorController implements Serializable {
                         patronymicField.getText(),
                         passportField.getText());
 
+                newClient.setId(id);
                 clients.add(i, newClient);
-                service.addClient(newClient);
+                service.editClient(newClient);
                 closeStage(e);
                 return;
             }

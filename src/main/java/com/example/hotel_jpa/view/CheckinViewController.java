@@ -87,12 +87,60 @@ public class CheckinViewController {
         });
 
         table.getSelectionModel().selectedItemProperty().addListener((observableValue, oldCheckin, newCheckin) -> {
+            if (newCheckin == null)
+                return;
             ObservableList<Client> clients =FXCollections.observableArrayList(newCheckin.getClient());
             clientsList.setItems(clients);
+            if (newCheckin.getState() == CheckIn.State.ACTIVE){
+                settlementBtn.setDisable(true);
+                cancelBookingBtn.setDisable(true);
+                releaseBtn.setDisable(false);
+            }
+            else if (newCheckin.getState() == CheckIn.State.BOOKED){
+                settlementBtn.setDisable(false);
+                cancelBookingBtn.setDisable(false);
+                releaseBtn.setDisable(true);
+            }
         });
 
-        registrationBtn.setOnAction(e -> {
-            app.createNewCheckin();
+        registrationBtn.setOnAction(e -> app.createNewCheckin());
+
+        roomsBtn.setOnAction(e -> app.manageRoom());
+
+        clientsBtn.setOnAction(e -> app.manageClient());
+
+        releaseBtn.setOnAction(e -> {
+            this.nullizeInterface();
+            this.changeSelectedCheckinState(CheckIn.State.EXPIRED, Room.State.FREE);
         });
+
+        cancelBookingBtn.setOnAction(e -> {
+            this.nullizeInterface();
+            this.changeSelectedCheckinState(CheckIn.State.CANCELED, Room.State.FREE);
+        });
+
+        settlementBtn.setOnAction(e -> {
+            this.nullizeInterface();
+            this.changeSelectedCheckinState(CheckIn.State.ACTIVE, Room.State.BUSY);
+        });
+    }
+
+    private void changeSelectedCheckinState(CheckIn.State chekinsState, Room.State roomsState){
+        if (table.getSelectionModel().getSelectedCells().isEmpty())
+            return;
+        CheckIn selectedItem = table.getSelectionModel().getSelectedItem();
+        app.getRoomService().setState(selectedItem.getRoom(), roomsState);
+        app.updateRoomData();
+
+        this.service.setState(selectedItem.getId(), chekinsState);
+        app.updateCheckInData();
+        table.setItems(app.getCheckinData());
+    }
+
+    private void nullizeInterface(){
+        this.clientsList.setItems(null);
+        settlementBtn.setDisable(true);
+        cancelBookingBtn.setDisable(true);
+        releaseBtn.setDisable(true);
     }
 }

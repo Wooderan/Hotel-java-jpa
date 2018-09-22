@@ -9,14 +9,14 @@ import com.example.hotel_jpa.services.impls.ClientServiceImpl;
 import com.example.hotel_jpa.services.impls.RoomServiceImpl;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.stage.Stage;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 
 public class CheckinCreatorController {
@@ -75,6 +75,9 @@ public class CheckinCreatorController {
     private TextField placesField;
 
     @FXML
+    private TextField totalField;
+
+    @FXML
     private void initialize(){
         clientsList.setCellFactory(clientListView -> new ListCell<Client>(){
             @Override
@@ -96,9 +99,9 @@ public class CheckinCreatorController {
             Client newClient = app.chooseClient();
             if (newClient != null) {
                 clients.add(newClient);
+                this.clientsCount++;
+                this.updateRooms();
             }
-            this.clientsCount++;
-            this.updatePlaces();
         });
 
         removeBtn.setOnAction(e -> {
@@ -108,17 +111,23 @@ public class CheckinCreatorController {
             clients.remove(clientsList.getSelectionModel().getSelectedItem());
 
             this.clientsCount--;
-            this.updatePlaces();
+            this.updateRooms();
         });
 
         settlementDate.valueProperty().addListener((observableValue, oldDate, newDate) -> {
             if (!this.checkDates())
                 settlementDate.setValue(oldDate);
+            else{
+                this.updateRooms();
+            }
         });
 
         releaseDate.valueProperty().addListener((observableValue, oldDate, newDate) -> {
             if (!this.checkDates())
                 releaseDate.setValue(oldDate);
+            else{
+                this.updateRooms();
+            }
         });
 
         stateChoice.setItems(FXCollections.observableList(Arrays.asList(
@@ -127,54 +136,36 @@ public class CheckinCreatorController {
         )));
         stateChoice.getSelectionModel().select(0);
 
-//        placesField.setOnAction(e -> {
-//            if (this.placesField.getText().isEmpty())
-//                roomsTable.setItems(FXCollections.observableList(rooms));
-//            else{
-//
-//                try {
-//                    Integer places = Integer.parseInt(this.placesField.getText());
-//                    if (places < this.clientsCount){
-//                        this.placesField.setText(String.valueOf(this.clientsCount));
-//                        return;
-//                    }
-//                    List<Room> newList = new ArrayList<>();
-//                    this.rooms.forEach(room -> {
-//                    if (room.getNumberOfPeoples() >= places)
-//                            newList.add(room);
-//                });
-//                    roomsTable.setItems(FXCollections.observableArrayList(newList));
-//                } catch (NumberFormatException ex) {
-//                    roomsTable.setItems(null);
-//                    return;
-//                }
-//
-//            }
-//
-//        });
-        placesField.textProperty().addListener((observableValue, oldS, newS) -> {
-            if (this.placesField.getText().isEmpty())
-                roomsTable.setItems(FXCollections.observableList(rooms));
-            else{
-                try {
-                    Integer places = Integer.parseInt(this.placesField.getText());
-                    if (places < this.clientsCount){
-                        this.placesField.setText(oldS);
-                        return;
-                    }
-                    List<Room> newList = new ArrayList<>();
-                    this.rooms.forEach(room -> {
-                        if (room.getNumberOfPeoples() >= places)
-                            newList.add(room);
-                    });
-                    roomsTable.setItems(FXCollections.observableArrayList(newList));
-                } catch (NumberFormatException ex) {
-                    roomsTable.setItems(null);
-                    return;
-                }
+        placesField.textProperty().addListener((observableValue, oldS, newS) -> this.updateRooms());
 
-            }
+        createBtn.setOnAction(e -> {
+            if (!this.validate())
+                return;
 
+            Set<Client> clients = new HashSet<>(this.clientsList.getItems());
+            Room selectedRoom = this.roomsTable.getSelectionModel().getSelectedItem();
+
+            CheckIn newCheckin = new CheckIn(
+                    clients,
+                    selectedRoom,
+                    this.settlementDate.getValue(),
+                    this.releaseDate.getValue()
+            );
+            newCheckin.setState(this.stateChoice.getValue());
+
+            this.checkInService.addCheckIn(newCheckin);
+            this.chekins.add(newCheckin);
+
+            if (newCheckin.getState() == CheckIn.State.ACTIVE)
+                roomService.setState(selectedRoom, Room.State.BUSY);
+
+            app.updateRoomData();
+            this.closeStage(e);
+        });
+        cancelBtn.setOnAction(this::closeStage);
+
+        roomsTable.getSelectionModel().selectedItemProperty().addListener((observableValue, room, t1) -> {
+            this.updatePrice();
         });
     }
 
@@ -188,9 +179,11 @@ public class CheckinCreatorController {
         clientsList.setItems(this.clients);
 
         settlementDate.setValue(LocalDate.now());
+        releaseDate.setValue(LocalDate.now());
 
-        rooms = new ArrayList<>(roomService.getAllFree());
+        rooms = new ArrayList<>(roomService.getAll());
         roomsTable.setItems(FXCollections.observableList(rooms));
+        this.placesField.setText("1");
     }
 
     private boolean checkDates() {
@@ -211,21 +204,101 @@ public class CheckinCreatorController {
         return true;
     }
 
-    private void updatePlaces(){
+    private void updateRooms(){
 
-        if (this.placesField.getText().isEmpty())
-            this.placesField.setText(String.valueOf(this.clientsCount));
-        else{
-            try {
-                Integer places = Integer.parseInt(this.placesField.getText());
-                if (places != this.clientsCount)
-                    this.placesField.setText(String.valueOf(this.clientsCount));
-            } catch (NumberFormatException ex) {
-                roomsTable.setItems(null);
-                return;
+        int clientsCount = this.clientsCount;
+        LocalDate settelementDate = this.settlementDate.getValue();
+        LocalDate releaseDate = this.releaseDate.getValue();
+        int places = this.getPlaces();
+
+
+        if (this.rooms == null)
+            return;
+        List<Room> roomList = new ArrayList<>(rooms);
+        List<CheckIn> checkinList = app.getCheckinData();
+
+        checkinList.forEach(checkIn -> {
+            if ( !  ((settelementDate.compareTo(checkIn.getDateOfSettlement()) < 0
+                            && releaseDate.compareTo(checkIn.getDateOfSettlement()) < 0)
+                    ||
+                    (settelementDate.compareTo(checkIn.getDateOfRelease()) > 0
+                            && releaseDate.compareTo(checkIn.getDateOfRelease()) > 0)
+
+            )){
+                roomList.removeIf(room -> room.getId().equals(checkIn.getRoom().getId()));
             }
 
+        });
+
+
+        List<Room> finalList = new ArrayList<>();
+        roomList.forEach(room -> {
+            if (room.getNumberOfPeoples() >= places)
+                finalList.add(room);
+        });
+
+        this.roomsTable.setItems(FXCollections.observableArrayList(finalList));
+
+        this.updatePrice();
+    }
+
+    private void updatePrice(){
+        Room selectedRoom = roomsTable.getSelectionModel().getSelectedItem();
+        if (selectedRoom == null)
+            return;
+
+        Double price = 0d;
+        int days = this.releaseDate.getValue().compareTo(this.settlementDate.getValue()) + 1;
+        price = selectedRoom.getPrice() * days;
+        this.totalField.setText(String.valueOf(price));
+    }
+
+    private int getPlaces() {
+
+        if (this.placesField.getText().isEmpty()){
+            this.placesField.setText("1");
+            return 1;
+        }
+
+        try {
+            int places = Integer.parseInt(this.placesField.getText());
+            if (places < clientsCount){
+                this.placesField.setText(String.valueOf(clientsCount));
+                places = clientsCount;
+            }
+            return places;
+        } catch (NumberFormatException ex) {
+            this.placesField.setText("1");
+            return 1;
         }
     }
 
+
+    private boolean validate() {
+        if (this.clientsCount <= 0){
+            //TODO warning "need at least one client"
+            System.out.println("validate() - need at least one client");
+            return false;
+        }
+
+        if (this.releaseDate.getValue() == null){
+            //TODO warning "release date is not set"
+            System.out.println("validate() - release date is not set");
+            return false;
+        }
+
+        if (this.roomsTable.getSelectionModel().getSelectedCells().isEmpty()){
+            //TODO warning "no room is selected"
+            System.out.println("validate() - no room is selected");
+            return false;
+        }
+
+        return true;
+    }
+
+    private void closeStage(ActionEvent e){
+        Node node = (Node) e.getSource();
+        Stage stage = (Stage) node.getScene().getWindow();
+        stage.close();
+    }
 }

@@ -4,21 +4,23 @@ package com.example.hotel_jpa.view;
 import com.example.hotel_jpa.App;
 import com.example.hotel_jpa.models.Client;
 import com.example.hotel_jpa.services.impls.ClientServiceImpl;
-import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 
 
 import java.io.Serializable;
-import java.util.List;
 
 public class ClientViewController implements Serializable {
+
+    public enum Mods{
+        MANAGER,
+        CHOOSER
+    }
 
     @FXML
     private TableView<Client> table;
@@ -83,7 +85,7 @@ public class ClientViewController implements Serializable {
         });
 
         newBtn.setOnAction( actionEvent -> {
-            Client newClient = app.getNewClient();
+            Client newClient = app.createNewClient();
             if (newClient != null)
                 this.setLabels(newClient);
         });
@@ -128,21 +130,20 @@ public class ClientViewController implements Serializable {
         });
     }
 
-    public void setApp(App app) {
+    public void setApp(App app, Mods mode) {
         this.app = app;
-//
-//        List<Client> clients = app.getClientData();
-        clientData = app.getClientData();
+
         service = app.getClientService();
+        clientData = app.getClientData();
         table.setItems(clientData);
         this.setLabels(clientData.get(0));
 
-//        clients = table.getItems();
+        if (mode == Mods.MANAGER)
+            chooseBtn.setVisible(false);
 
-//        table.refresh();
     }
 
-    public void setLabels(Client client){
+    private void setLabels(Client client){
         if (currentClient == client)
             return;
         currentClient = client;

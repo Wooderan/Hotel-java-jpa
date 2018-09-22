@@ -54,11 +54,15 @@ public class RoomServiceImpl implements IRoomService {
     }
 
     public ObservableList<Room> getAllObserved() {
-        ObservableList<Room> retList = FXCollections.observableArrayList(repository.findAll());
-        return retList;
+        return FXCollections.observableArrayList(repository.findAll());
     }
 
     public List<Room> getAllFree() {
         return repository.findByState(Room.State.FREE);
+    }
+
+    @Transactional
+    public void setState(Room selectedRoom, Room.State state) {
+        repository.setState(selectedRoom.getId(), state);
     }
 }

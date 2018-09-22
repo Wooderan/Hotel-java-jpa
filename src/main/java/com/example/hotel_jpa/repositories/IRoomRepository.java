@@ -24,6 +24,10 @@ public interface IRoomRepository extends JpaRepository<Room, Long> {
             @Param("price")Double price
     );
 
+    @Modifying
+    @Query("update Room r set r.state = :state where r.id = :id")
+    void setState(@Param("id") long id, @Param("state")Room.State state);
+
 
     List<Room> findByState(Room.State state);
 }
